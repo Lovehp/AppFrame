@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.webapp.dao.SysRoleMapper">
+	<resultMap id="BaseResultMap" type="SysRole">
+		<id column="ROLE_ID" property="roleId" jdbcType="INTEGER" />
+		<result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+		<result column="ROLE_DESC" property="roleDesc" jdbcType="VARCHAR" />
+		<result column="SUP_ROLE_ID" property="supRoleId" jdbcType="INTEGER" />
+		<result column="DOMAIN_ID" property="domainId" jdbcType="INTEGER" />
+		<result column="DATA_STATE" property="dataState" jdbcType="TINYINT" />
+		<result column="CREATOR" property="creator" jdbcType="INTEGER" />
+		<result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="MODIFIER" property="modifier" jdbcType="INTEGER" />
+		<result column="MODIFY_DATE" property="modifyDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ROLE_ID, ROLE_NAME, ROLE_DESC, SUP_ROLE_ID, DOMAIN_ID,
+		DATA_STATE, CREATOR,
+		CREATE_DATE,
+		MODIFIER, MODIFY_DATE
+	</sql>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete FROM
+		SYS_ROLE
+		where ROLE_ID = #{roleId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="SysRole">
+		insert into SYS_ROLE (ROLE_ID,
+		ROLE_NAME, ROLE_DESC,
+		SUP_ROLE_ID, DOMAIN_ID, DATA_STATE,
+		CREATOR,
+		CREATE_DATE, MODIFIER,
+		MODIFY_DATE)
+		values (#{roleId,jdbcType=INTEGER},
+		#{roleName,jdbcType=VARCHAR},
+		#{roleDesc,jdbcType=VARCHAR},
+		#{supRoleId,jdbcType=INTEGER},
+		#{domainId,jdbcType=INTEGER},
+		#{dataState,jdbcType=TINYINT},
+		#{creator,jdbcType=INTEGER},
+		#{createDate,jdbcType=TIMESTAMP},
+		#{modifier,jdbcType=INTEGER},
+		#{modifyDate,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="SysRole">
+		insert into SYS_ROLE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roleId != null">
+				ROLE_ID,
+			</if>
+			<if test="roleName != null">
+				ROLE_NAME,
+			</if>
+			<if test="roleDesc != null">
+				ROLE_DESC,
+			</if>
+			<if test="supRoleId != null">
+				SUP_ROLE_ID,
+			</if>
+			<if test="domainId != null">
+				DOMAIN_ID,
+			</if>
+			<if test="dataState != null">
+				DATA_STATE,
+			</if>
+			<if test="creator != null">
+				CREATOR,
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE,
+			</if>
+			<if test="modifier != null">
+				MODIFIER,
+			</if>
+			<if test="modifyDate != null">
+				MODIFY_DATE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roleId != null">
+				#{roleId,jdbcType=INTEGER},
+			</if>
+			<if test="roleName != null">
+				#{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="roleDesc != null">
+				#{roleDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="supRoleId != null">
+				#{supRoleId,jdbcType=INTEGER},
+			</if>
+			<if test="domainId != null">
+				#{domainId,jdbcType=INTEGER},
+			</if>
+			<if test="dataState != null">
+				#{dataState,jdbcType=TINYINT},
+			</if>
+			<if test="creator != null">
+				#{creator,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifier != null">
+				#{modifier,jdbcType=INTEGER},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		ROLE_ID,
+		ROLE_NAME,
+		ROLE_DESC,
+		SUP_ROLE_ID,
+		DOMAIN_ID,
+		DATA_STATE,
+		CREATOR,
+		CREATE_DATE,
+		MODIFIER,
+		MODIFY_DATE
+		FROM
+		SYS_ROLE
+		where ROLE_ID = #{roleId,jdbcType=INTEGER}
+	</select>
+	<select id="getListPage" resultMap="BaseResultMap">
+		select
+		ROLE_ID,
+		ROLE_NAME,
+		ROLE_DESC,
+		SUP_ROLE_ID,
+		DOMAIN_ID,
+		DATA_STATE,
+		CREATOR,
+		CREATE_DATE,
+		MODIFIER,
+		MODIFY_DATE
+		FROM SYS_ROLE
+	</select>
+	<select id="getListPage_" resultMap="BaseResultMap"
+		parameterType="java.util.Map">
+		select
+		ROLE_ID,
+		ROLE_NAME,
+		ROLE_DESC,
+		SUP_ROLE_ID,
+		DOMAIN_ID,
+		DATA_STATE,
+		CREATOR,
+		CREATE_DATE,
+		MODIFIER,
+		MODIFY_DATE
+		FROM SYS_ROLE
+		<where>
+			<if test="param.roleId!=null and param.roleId!=''">
+				AND ROLE_ID=#{param.roleId}
+			</if>
+			<if test="param.roleName!=null and param.roleName!=''">
+				AND ROLE_NAME=#{param.roleName}
+			</if>
+			<if test="param.roleDesc!=null and param.roleDesc!=''">
+				AND ROLE_DESC=#{param.roleDesc}
+			</if>
+			<if test="param.supRoleId!=null and param.supRoleId!=''">
+				AND SUP_ROLE_ID=#{param.supRoleId}
+			</if>
+			<if test="param.domainId!=null and param.domainId!=''">
+				AND DOMAIN_ID=#{param.domainId}
+			</if>
+			<if test="param.dataState!=null and param.dataState!=''">
+				AND DATA_STATE=#{param.dataState}
+			</if>
+			<if test="param.creator!=null and param.creator!=''">
+				AND CREATOR=#{param.creator}
+			</if>
+			<if test="param.createDate!=null and param.createDate!=''">
+				AND CREATE_DATE=#{param.createDate}
+			</if>
+			<if test="param.modifier!=null and param.modifier!=''">
+				AND MODIFIER=#{param.modifier}
+			</if>
+			<if test="param.modifyDate!=null and param.modifyDate!=''">
+				AND MODIFIER_DATE=#{param.modifyDate}
+			</if>
+		</where>
+		<if test="param.orderBy!=null and param.orderBy!=''">
+			ORDER BY ${param.orderBy}
+		</if>
+	</select>
+	<select id="getList" resultMap="BaseResultMap">
+		select
+		ROLE_ID,
+		ROLE_NAME,
+		ROLE_DESC,
+		SUP_ROLE_ID,
+		DOMAIN_ID,
+		DATA_STATE,
+		CREATOR,
+		CREATE_DATE,
+		MODIFIER,
+		MODIFY_DATE
+		FROM SYS_ROLE
+	</select>
+	<select id="getList_" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		ROLE_ID,
+		ROLE_NAME,
+		ROLE_DESC,
+		SUP_ROLE_ID,
+		DOMAIN_ID,
+		DATA_STATE,
+		CREATOR,
+		CREATE_DATE,
+		MODIFIER,
+		MODIFY_DATE
+		FROM SYS_ROLE
+		<where>
+			<if test="param.roleId!=null and param.roleId!=''">
+				AND ROLE_ID=#{param.roleId}
+			</if>
+			<if test="param.roleName!=null and param.roleName!=''">
+				AND ROLE_NAME=#{param.roleName}
+			</if>
+			<if test="param.roleDesc!=null and param.roleDesc!=''">
+				AND ROLE_DESC=#{param.roleDesc}
+			</if>
+			<if test="param.supRoleId!=null and param.supRoleId!=''">
+				AND SUP_ROLE_ID=#{param.supRoleId}
+			</if>
+			<if test="param.domainId!=null and param.domainId!=''">
+				AND DOMAIN_ID=#{param.domainId}
+			</if>
+			<if test="param.dataState!=null and param.dataState!=''">
+				AND DATA_STATE=#{param.dataState}
+			</if>
+			<if test="param.creator!=null and param.creator!=''">
+				AND CREATOR=#{param.creator}
+			</if>
+			<if test="param.createDate!=null and param.createDate!=''">
+				AND CREATE_DATE=#{param.createDate}
+			</if>
+			<if test="param.modifier!=null and param.modifier!=''">
+				AND MODIFIER=#{param.modifier}
+			</if>
+			<if test="param.modifyDate!=null and param.modifyDate!=''">
+				AND MODIFIER_DATE=#{param.modifyDate}
+			</if>
+		</where>
+		<if test="param.orderBy!=null and param.orderBy!=''">
+			ORDER BY ${param.orderBy}
+		</if>
+	</select>
+
+	<!-- 更新不为空的字段 -->
+	<update id="updateByPrimaryKeySelective" parameterType="SysRole">
+		update sys_role
+		<set>
+			<if test="roleName != null">
+				ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="roleDesc != null">
+				ROLE_DESC = #{roleDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="supRoleId != null">
+				SUP_ROLE_ID = #{supRoleId,jdbcType=INTEGER},
+			</if>
+			<if test="domainId != null">
+				DOMAIN_ID = #{domainId,jdbcType=INTEGER},
+			</if>
+			<if test="dataState != null">
+				DATA_STATE = #{dataState,jdbcType=TINYINT},
+			</if>
+			<if test="creator != null">
+				CREATOR = #{creator,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifier != null">
+				MODIFIER = #{modifier,jdbcType=INTEGER},
+			</if>
+			<if test="modifyDate != null">
+				MODIFY_DATE = #{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ROLE_ID = #{roleId,jdbcType=INTEGER}
+	</update>
+
+	<!-- 更新所有字段属性 -->
+	<update id="updateByPrimaryKey" parameterType="SysRole">
+		update sys_role
+		set ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+		ROLE_DESC = #{roleDesc,jdbcType=VARCHAR},
+		SUP_ROLE_ID = #{supRoleId,jdbcType=INTEGER},
+		DOMAIN_ID = #{domainId,jdbcType=INTEGER},
+		DATA_STATE = #{dataState,jdbcType=TINYINT},
+		CREATOR = #{creator,jdbcType=INTEGER},
+		CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+		MODIFIER = #{modifier,jdbcType=INTEGER},
+		MODIFY_DATE = #{modifyDate,jdbcType=TIMESTAMP}
+		where ROLE_ID = #{roleId,jdbcType=INTEGER}
+	</update>
+</mapper>

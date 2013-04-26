@@ -1,0 +1,30 @@
+<div id="content">
+	<div>
+		<label for="name">配置文件:</label>
+		<input id="fileName" type="text" name="name" size="80" value="${filePath}" readonly="true" />
+	</div>
+	<div>
+		<label for="name">对象来源:</label> 
+		<select id="ObjSrcSelect" class="easyui-combobox" name="objselect" style="width: 120px;">
+			<option value="1">数据库表</option>
+			<option value="2">查询视图</option>
+		</select> 
+		<input type="button" onclick="loadBeanInfoFromDB();" value="获取信息" />
+	</div>
+	<div id="table_box">
+		<input id="tableSelect" class="easyui-combobox" name="language" style="width: 200px;" data-options="url:'${root}>/DBInfoManager/getAllTables',valueField:'tableName',textField:'tableName',panelHeight:'auto'" />
+		<label for="name">主键:</label>
+		<input id="pkName" type="text" size="20" value="" />
+	</div>
+	<div id="select_box">
+		<textarea id="selectText" name="message" style="width: 1000px; height: 120px;"></textarea>
+	</div>
+	<div>
+		<input type="checkbox" value="GenJavaBeanTask" /> JavaBean类 
+		<input type="checkbox" value="GenJavaBeanMapTask" /> SqlMap配置 
+		<input type="checkbox" value="GenDaoTask" /> Dao类 
+		<input type="checkbox" value="GenServiceTask" /> Service类 
+		<input type="checkbox" value="GenActionTask" /> Action类 
+		<input type="button" onclick="genCode();" value="生成代码" />
+	</div>
+</div>

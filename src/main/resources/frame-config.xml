@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!-- 引入相关组件,方便后期维护 -->
+
+	<!-- DAO配置 -->
+	<import resource="classpath:frame-spring-daoContext.xml" />
+	<!-- AOP配置 -->
+	<import resource="classpath:frame-spring-aopContext.xml" />
+	<!-- IOC配置 -->
+	<import resource="classpath:frame-spring-iocContext.xml" />
+	
+</beans>
