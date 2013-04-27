@@ -17,7 +17,20 @@
 	</context:component-scan>
 	
 	<!-- 启动注解驱动 -->
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- spring对fastjson支持 -->
+			<bean class="com.webapp.framework.support.MappingFastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes" value="application/json" />
+				<property name="serializerFeature">
+					<array>
+						<value>WriteMapNullValue</value>
+						<value>QuoteFieldNames</value>
+					</array>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 	
 	<!-- URL拦截器 -->
 	<mvc:interceptors>
@@ -27,12 +40,10 @@
 			<bean class="com.webapp.web.interceptor.StopWatchHandlerInterceptor" />
 		</mvc:interceptor>
 		<!-- 请求,响应对象拦截 -->
-		<!-- 
 		<mvc:interceptor>
-			<mvc:mapping path="/*"/>
+			<mvc:mapping path="/**"/>
 			<bean class="com.webapp.web.interceptor.BaseHandlerInterceptor" />
 		</mvc:interceptor>
-		 -->
 	</mvc:interceptors>
 	
 	<!-- 静态资源映射 -->
@@ -69,5 +80,5 @@
 			</props>
 		</property>
 	</bean>
-
+	
 </beans>

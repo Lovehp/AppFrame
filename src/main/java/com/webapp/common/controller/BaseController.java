@@ -1,20 +1,12 @@
 package com.webapp.common.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * spring控制器基类
@@ -24,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class BaseController{
 
-	@Autowired
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
@@ -582,67 +573,5 @@ public abstract class BaseController{
 	public BaseController removeCookie(String name,String path,String domain){
 		setCookie(name,null,0,path,domain);
 		return this;
-	}
-
-	public String returnJson(HttpServletResponse response,CharSequence text){
-		return returnText(response,text,"application/json;charset=UTF-8");
-	}
-
-	public String returnXml(HttpServletResponse response,CharSequence text){
-		return returnText(response,text,"text/xml;charset=UTF-8");
-	}
-
-	public String returnText(HttpServletResponse response,CharSequence text){
-		return returnText(response,text,"text/plain;charset=UTF-8");
-	}
-
-	public String returnText(HttpServletResponse response,CharSequence text,String contenttype){
-		response.setContentType(contenttype);
-		try{
-			response.getWriter().write(text.toString());
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public void setFileHeader(HttpServletResponse response,CharSequence mimeType,CharSequence fileName,int size) throws Exception{
-		response.reset();
-		if(mimeType!=null)
-			response.setContentType(mimeType.toString());
-		try{
-			response.addHeader("Content-Disposition","attachment;filename="+new String(fileName.toString().getBytes("GB18030"),"ISO-8859-1"));
-		}catch(UnsupportedEncodingException e){
-			throw new Exception("file encodeing error!");
-		}
-		if(size>0)
-			response.addIntHeader("Content-Length",size);
-	}
-
-	public void downloadFile(HttpServletResponse response,CharSequence mimeType,CharSequence fileName,InputStream file,int size) throws Exception{
-		setFileHeader(response,mimeType,fileName,size);
-		try{
-			OutputStream out=response.getOutputStream();
-			int l;
-			while((l=file.read())>=0){
-				out.write(l);
-			}
-			out.flush();
-			file.close();
-			out.close();
-		}catch(IOException e){
-			throw new Exception("file write to response error!");
-		}
-	}
-
-	public void returnExcel(HttpServletResponse response,String filename,HSSFWorkbook workBook) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("Application/msexcel");
-		response.addHeader("Content-Disposition","attachment; filename=\""+filename+"\"");
-		workBook.write(response.getOutputStream());
-	}
-
-	public void forward(HttpServletRequest request,HttpServletResponse response,String path) throws ServletException, IOException{
-		request.getRequestDispatcher(path).forward(request,response);
 	}
 }

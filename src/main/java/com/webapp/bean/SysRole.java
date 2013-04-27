@@ -2,10 +2,7 @@ package com.webapp.bean;
 
 import java.util.Date;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import com.webapp.common.bean.BaseBean;
-import com.webapp.common.jackson.type.JsonDateSerializer;
 
 public class SysRole extends BaseBean{
 
@@ -40,12 +37,10 @@ public class SysRole extends BaseBean{
 
 	private Integer creator;
 
-	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date createDate;
 
 	private Integer modifier;
 
-	@JsonSerialize(using=JsonDateSerializer.class)
 	private Date modifyDate;
 
 	public Integer getRoleId(){
