@@ -1,7 +1,10 @@
 <div id="content">
+	<div class="">
+		<ul id="folder"></ul>
+	</div>
 	<div>
 		<label for="name">配置文件:</label>
-		<input id="fileName" type="text" name="name" size="80" value="${filePath}" readonly="true" />
+		<input id="fileName" type="text" name="name" size="80" readonly="true" />
 	</div>
 	<div>
 		<label for="name">对象来源:</label> 
@@ -25,14 +28,15 @@
 		<input type="checkbox" value="GenDaoTask" /> Dao类 
 		<input type="checkbox" value="GenServiceTask" /> Service类 
 		<input type="checkbox" value="GenActionTask" /> Action类 
-		<input type="button" onclick="genCode();" value="生成代码" />
+		<input type="button" onclick="" value="生成代码" />
 	</div>
 </div>
-<!-- <script type="text/javascript" src="${root}/res/js/genCode.js"></script>-->
+<script type="text/javascript" src="${root}/res/js/genCode.js"></script>
+<!-- 
 <script type="text/javascript">
-	jQuery.getScript(
-			"${root}/res/js/genCode.js",
+	jQuery.getScript("${root}/res/js/genCode.js",
 			function() {
 				init();
 			});
 </script>
+ -->
