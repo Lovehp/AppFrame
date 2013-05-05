@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$("html").mask({maskMsg:'页面正在加载中,请稍候...',});
+	$("html").mask({maskMsg:'页面正在加载中,请稍候...'});
 });
 $(function() {
 	init();
