@@ -68,3 +68,6 @@ if ($.fn.datetimebox && $.fn.datebox){
 		missingMessage: $.fn.datebox.defaults.missingMessage
 	});
 }
+if($.fn.panel){
+	$.fn.panel.defaults.loadingMessage='加载中...';
+}

@@ -8,16 +8,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,18 @@ public class Files{
 	}
 
 	/**
+	 * 判断文件是否存在
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean exist(String filePath) throws Exception{
+		return readFile(filePath).exists();
+	}
+
+	/**
 	 * 创建目录
 	 * 
 	 * @param dir
@@ -44,7 +57,7 @@ public class Files{
 	public static void mkdir(String dir){
 		try{
 			String dirTemp=dir;
-			File dirfilePath=new File(dirTemp);
+			File dirfilePath=readFile(dirTemp);
 			if(!dirfilePath.exists()){
 				dirfilePath.mkdir();
 			}
@@ -64,18 +77,7 @@ public class Files{
 	 */
 	public static void createNewFile(String fileName,String content){
 		try{
-			String fileNameTemp=fileName;
-			File filefilePath=new File(fileNameTemp);
-			if(!filefilePath.exists()){
-				filefilePath.createNewFile();
-			}
-			FileWriter fw=new FileWriter(filefilePath);
-			PrintWriter pw=new PrintWriter(fw);
-			String strContent=content;
-			pw.println(strContent);
-			pw.flush();
-			pw.close();
-			fw.close();
+			FileUtils.write(readFile(fileName),content);
 		}catch(Exception e){
 			logger.error("新建文件操作出错: "+e.getMessage());
 			e.printStackTrace();
@@ -83,15 +85,16 @@ public class Files{
 	}
 
 	/**
-	 * 删除文件
+	 * 根据路径来删除文件
 	 * 
-	 * @param fileName
+	 * @param filePath
+	 *            文件路径
+	 * @throws Exception
 	 */
-	public static void delFile(String fileName){
+	public static void delete(String filePath) throws Exception{
+		File dest=readFile(filePath);
 		try{
-			String filefilePath=fileName;
-			File delFile=new File(filefilePath);
-			delFile.delete();
+			FileUtils.forceDelete(dest);
 		}catch(Exception e){
 			logger.error("删除文件操作出错: "+e.getMessage());
 			e.printStackTrace();
@@ -106,14 +109,9 @@ public class Files{
 	 */
 	public static void delFolder(String folderfilePath){
 		try{
-			// 删除文件夹里面所有内容
-			delAllFile(folderfilePath);
-			String filefilePath=folderfilePath;
-			File myFilefilePath=new File(filefilePath);
-			// 删除空文件夹
-			myFilefilePath.delete();
+			FileUtils.deleteDirectory(readFile(folderfilePath));
 		}catch(Exception e){
-			logger.error("删除文件夹操作出错"+e.getMessage());
+			logger.error("删除文件夹操作出错: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -125,31 +123,11 @@ public class Files{
 	 *            文件夹路径
 	 */
 	public static void delAllFile(String filePath){
-		File file=new File(filePath);
-		if(!file.exists()){
-			return;
-		}
-		if(!file.isDirectory()){
-			return;
-		}
-		String[] childFiles=file.list();
-		File temp=null;
-		for(int i=0;i<childFiles.length;i++){
-			// File.separator与系统有关的默认名称分隔符
-			// 在UNIX系统上，此字段的值为'/'；在Microsoft Windows系统上，它为 '\'。
-			if(filePath.endsWith(File.separator)){
-				temp=new File(filePath+childFiles[i]);
-			}else{
-				temp=new File(filePath+File.separator+childFiles[i]);
-			}
-			if(temp.isFile()){
-				temp.delete();
-			}
-			if(temp.isDirectory()){
-				delAllFile(filePath+"/"+childFiles[i]);
-				// 先删除文件夹里面的文件
-				delFolder(filePath+"/"+childFiles[i]);// 再删除空文件夹
-			}
+		try{
+			FileUtils.cleanDirectory(readFile(filePath));
+		}catch(Exception e){
+			logger.error("删除文件夹里所有文件操作出错: "+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -163,17 +141,7 @@ public class Files{
 	 */
 	public static void copyFile(String srcFile,String dirDest){
 		try{
-			FileInputStream in=new FileInputStream(srcFile);
-			mkdir(dirDest);
-			FileOutputStream out=new FileOutputStream(dirDest+"/"+new File(srcFile).getName());
-			int len;
-			byte buffer[]=new byte[1024];
-			while((len=in.read(buffer))!=-1){
-				out.write(buffer,0,len);
-			}
-			out.flush();
-			out.close();
-			in.close();
+			FileUtils.copyFile(readFile(srcFile),readFile(dirDest));
 		}catch(Exception e){
 			logger.error("复制文件操作出错:"+e.getMessage());
 			e.printStackTrace();
@@ -189,33 +157,8 @@ public class Files{
 	 *            目标文件夹路径 如：E:/phsftp/dest
 	 */
 	public static void copyFolder(String oldfilePath,String newfilePath){
-		try{ // 如果文件夹不存在 则新建文件夹
-			mkdir(newfilePath);
-			File file=new File(oldfilePath);
-			String[] files=file.list();
-			File temp=null;
-			for(int i=0;i<files.length;i++){
-				if(oldfilePath.endsWith(File.separator)){
-					temp=new File(oldfilePath+files[i]);
-				}else{
-					temp=new File(oldfilePath+File.separator+files[i]);
-				}
-				if(temp.isFile()){
-					FileInputStream input=new FileInputStream(temp);
-					FileOutputStream output=new FileOutputStream(newfilePath+"/"+(temp.getName()).toString());
-					byte[] buffer=new byte[1024*2];
-					int len;
-					while((len=input.read(buffer))!=-1){
-						output.write(buffer,0,len);
-					}
-					output.flush();
-					output.close();
-					input.close();
-				}
-				if(temp.isDirectory()){// 如果是子文件夹
-					copyFolder(oldfilePath+"/"+files[i],newfilePath+"/"+files[i]);
-				}
-			}
+		try{
+			FileUtils.copyDirectory(readFile(oldfilePath),readFile(newfilePath));
 		}catch(Exception e){
 			logger.error("复制文件夹操作出错:"+e.getMessage());
 			e.printStackTrace();
@@ -231,21 +174,12 @@ public class Files{
 	 *            目标文件目录 如：E:/phsftp/dest
 	 */
 	public static void moveFile(String oldfilePath,String newfilePath){
-		copyFile(oldfilePath,newfilePath);
-		delFile(oldfilePath);
-	}
-
-	/**
-	 * 移动文件到指定目录，不会删除文件夹
-	 * 
-	 * @param oldfilePath
-	 *            源文件目录 如：E:/phsftp/src
-	 * @param newfilePath
-	 *            目标文件目录 如：E:/phsftp/dest
-	 */
-	public static void moveFiles(String oldfilePath,String newfilePath){
-		copyFolder(oldfilePath,newfilePath);
-		delAllFile(oldfilePath);
+		try{
+			FileUtils.moveFileToDirectory(readFile(oldfilePath),readFile(newfilePath),true);
+		}catch(Exception e){
+			logger.error("移动文件操作出错:"+e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -257,8 +191,12 @@ public class Files{
 	 *            目标文件目录 如：E:/phsftp/dest
 	 */
 	public static void moveFolder(String oldfilePath,String newfilePath){
-		copyFolder(oldfilePath,newfilePath);
-		delFolder(oldfilePath);
+		try{
+			FileUtils.moveDirectoryToDirectory(readFile(oldfilePath),readFile(newfilePath),true);
+		}catch(Exception e){
+			logger.error("移动文件夹操作出错:"+e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -380,7 +318,7 @@ public class Files{
 	 * @return
 	 * @throws Exception
 	 */
-	public static Set<String> readFile(String filePath) throws Exception{
+	public static Set<String> readFileSet(String filePath) throws Exception{
 		Set<String> datas=new HashSet<String>();
 		FileReader fr=new FileReader(filePath);
 		BufferedReader br=new BufferedReader(fr);
@@ -391,6 +329,44 @@ public class Files{
 		br.close();
 		fr.close();
 		return datas;
+	}
+
+	/**
+	 * 读取文件内容
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @param encoding
+	 *            编码
+	 * @return
+	 * @throws Exception
+	 */
+	public static String readFileString(String filePath,String encoding) throws Exception{
+		return FileUtils.readFileToString(readFile(filePath),encoding);
+	}
+
+	/**
+	 * 读取文件
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @return
+	 * @throws Exception
+	 */
+	public static File readFile(String filePath) throws Exception{
+		return new File(filePath);
+	}
+
+	/**
+	 * 读取文件数据
+	 * 
+	 * @param filePath
+	 *            文件路径
+	 * @return
+	 * @throws Exception
+	 */
+	public FileInputStream read(String filePath) throws Exception{
+		return new FileInputStream(filePath);
 	}
 
 	/**
@@ -538,20 +514,20 @@ public class Files{
 		return(strIndex==strLength);
 	}
 
-	public static void main(String[] paramert){
-		// 在此目录中找文件
-		String baseDIR="d:/mywork";
-		// 找扩展名为txt的文件
-		String fileName="*.txt";
-		List<File> resultList=new ArrayList<File>();
-		findFiles(baseDIR,fileName,resultList);
-		if(resultList.size()==0){
-			System.out.println("No File Fount.");
-		}else{
-			for(int i=0;i<resultList.size();i++){
-				System.out.println(resultList.get(i));// 显示查找结果。
-			}
-		}
-	}
+	// public static void main(String[] paramert){
+	// // 在此目录中找文件
+	// String baseDIR="d:/mywork";
+	// // 找扩展名为txt的文件
+	// String fileName="*.txt";
+	// List<File> resultList=new ArrayList<File>();
+	// findFiles(baseDIR,fileName,resultList);
+	// if(resultList.size()==0){
+	// System.out.println("No File Fount.");
+	// }else{
+	// for(int i=0;i<resultList.size();i++){
+	// System.out.println(resultList.get(i));// 显示查找结果。
+	// }
+	// }
+	// }
 
 }

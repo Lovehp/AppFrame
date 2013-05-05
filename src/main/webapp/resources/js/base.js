@@ -157,89 +157,87 @@ _AF=function(){
 			 * 绑定右键菜单
 			 */
 			init:function(){
-				//刷新,当tabs是iframe时生效
-				$('#mm-tabupdate').click(function(){
-					var currTab = $('#tabs').tabs('getSelected');
-					var url = $(currTab.panel('options').content).attr('src');
-					if(url != undefined && currTab.panel('options').title != '首页(Home)') {
-						$('#tabs').tabs('update',{
-							tab:currTab,
-							options:{
-								content:_AF.tabs.create(url)
-							}
-						});
+				var onlyOpenTitle='首页(Home)';
+				$('#mm').menu({
+					onClick: function (item) {
+						closeTab(item.id);
 					}
 				});
-				//关闭当前
-				$('#mm-tabclose').click(function(){
-					var currtab_title = $('#mm').data("currtab");
-					$('#tabs').tabs('close',currtab_title);
-				});
-				//全部关闭
-				$('#mm-tabcloseall').click(function(){
-					$('.tabs-inner span').each(function(i,n){
-						var t = $(n).text();
-						if(t != '首页(Home)') {
-							$('#tabs').tabs('close',t);
-						}
+				function closeTab(action){
+					var alltabs = $('#tabs').tabs('tabs');
+					var currTab =$('#tabs').tabs('getSelected');
+					var allTabtitle = [];
+					$.each(alltabs,function(i,n){
+						allTabtitle.push($(n).panel('options').title);
 					});
-				});
-				//关闭除当前之外的TAB
-				$('#mm-tabcloseother').click(function(){
-					var prevall = $('.tabs-selected').prevAll();
-					var nextall = $('.tabs-selected').nextAll();
-					if(prevall.length>0){
-						prevall.each(function(i,n){
-							var t=$('a:eq(0) span',$(n)).text();
-							if(t != '首页(Home)') {
-								$('#tabs').tabs('close',t);
+					switch(action){
+						case 'tabupdate':
+							var url = $(currTab.panel('options').content).attr('src');
+							if(url != undefined && currTab.panel('options').title != onlyOpenTitle) {
+								$('#tabs').tabs('update',{
+									tab:currTab,
+									options:{
+										content:_AF.tabs.create(url)
+									}
+								});
 							}
-						});
-					}
-					if(nextall.length>0) {
-						nextall.each(function(i,n){
-							var t=$('a:eq(0) span',$(n)).text();
-							if(t != '首页(Home)') {
-								$('#tabs').tabs('close',t);
+							break;
+						case 'close':
+							var currtab_title = $('#mm').data("currtab");
+							$('#tabs').tabs('close',currtab_title);
+							break;
+						case 'closeall':
+							$.each(allTabtitle, function (i, n) {
+								if (n != onlyOpenTitle){
+									$('#tabs').tabs('close',n);
+								}
+							});
+							break;
+						case 'closeother':
+							var currtab_title = $('#mm').data("currtab");
+							$.each(allTabtitle, function (i, n) {
+								if (n != currtab_title && n != onlyOpenTitle)
+								{
+									$('#tabs').tabs('close', n);
+								}
+							});
+							break;
+						case 'closeright':
+							var tabIndex = $('#tabs').tabs('getTabIndex', currTab);
+							if (tabIndex == alltabs.length - 1){
+								_AF.msg.show('系统提示', '右侧没有可关闭的tab页', 'error');
+								return false;
 							}
-						});
+							$.each(allTabtitle, function (i, n) {
+								if (i > tabIndex) {
+									if (n != onlyOpenTitle){
+										$('#tabs').tabs('close', n);
+									}
+								}
+							});
+							break;
+						case 'closeleft':
+							var tabIndex = $('#tabs').tabs('getTabIndex', currTab);
+							if (tabIndex == 1) {
+								_AF.msg.show('系统提示', '首页不能被关闭', 'error');
+								return false;
+							}
+							$.each(allTabtitle, function (i, n) {
+								if (i < tabIndex) {
+									if (n != onlyOpenTitle){
+										$('#tabs').tabs('close', n);
+									}
+								}
+							});
+							break;
+						case 'exit':
+							$('#mm').menu('hide');
+							break;
 					}
-					return false;
-				});
-				//关闭当前右侧的TAB
-				$('#mm-tabcloseright').click(function(){
-					var nextall = $('.tabs-selected').nextAll();
-					if(nextall.length==0){
-						_AF.msg.show('系统提示', '右侧没有可关闭的tab页', 'error');
-						return false;
-					}
-					nextall.each(function(i,n){
-						var t=$('a:eq(0) span',$(n)).text();
-						if(t != '首页(Home)'){
-							$('#tabs').tabs('close',t);
-						}
-					});
-					return false;
-				});
-				//关闭当前左侧的TAB
-				$('#mm-tabcloseleft').click(function(){
-					var prevall = $('.tabs-selected').prevAll();
-					if(prevall.length==0){
-						_AF.msg.show('系统提示', '左侧没有可关闭的tab页', 'error');
-						return false;
-					}else if(prevall.length==1){
-						_AF.msg.show('系统提示', '首页不能被关闭', 'error');
-						return false;
-					}
-					prevall.each(function(i,n){
-						var t=$('a:eq(0) span',$(n)).text();
-						if(t != '首页(Home)'){
-							$('#tabs').tabs('close',t);
-						}
-					});
-					return false;
-				});
+				}
+				return false;
 			},
+			
 			/**
 			 * 返回创建的iframe
 			 * @param url 页面路径

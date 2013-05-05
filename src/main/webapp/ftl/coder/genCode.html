@@ -5,14 +5,14 @@
 	</div>
 	<div>
 		<label for="name">对象来源:</label> 
-		<select id="ObjSrcSelect" class="easyui-combobox" name="objselect" style="width: 120px;">
+		<select id="objSrcSelect" class="easyui-combobox" name="objselect" style="width: 120px;">
 			<option value="1">数据库表</option>
 			<option value="2">查询视图</option>
 		</select> 
 		<input type="button" onclick="loadBeanInfoFromDB();" value="获取信息" />
 	</div>
 	<div id="table_box">
-		<input id="tableSelect" class="easyui-combobox" name="language" style="width: 200px;" data-options="url:'${root}>/DBInfoManager/getAllTables',valueField:'tableName',textField:'tableName',panelHeight:'auto'" />
+		<input id="tableSelect" class="easyui-combobox" name="language" style="width: 200px;" />
 		<label for="name">主键:</label>
 		<input id="pkName" type="text" size="20" value="" />
 	</div>
@@ -28,3 +28,11 @@
 		<input type="button" onclick="genCode();" value="生成代码" />
 	</div>
 </div>
+<!-- <script type="text/javascript" src="${root}/res/js/genCode.js"></script>-->
+<script type="text/javascript">
+	jQuery.getScript(
+			"${root}/res/js/genCode.js",
+			function() {
+				init();
+			});
+</script>
