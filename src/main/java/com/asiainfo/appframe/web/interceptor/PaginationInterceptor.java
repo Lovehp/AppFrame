@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.asiainfo.appframe.common.bean.PageBean;
+import com.asiainfo.appframe.common.db.dialect.DB2Dialect;
 import com.asiainfo.appframe.common.db.dialect.Dialect;
 import com.asiainfo.appframe.common.db.dialect.MysqlDialect;
 import com.asiainfo.appframe.util.Reflections;
@@ -161,6 +162,8 @@ public class PaginationInterceptor implements Interceptor{
 			String pageSql=null;
 			if(Dialect.Type.MYSQL.toString().equalsIgnoreCase(dialect)){
 				pageSql=new MysqlDialect().getLimitString(sql,page.getCurrentResult(),page.getShowCount());
+			}else if(Dialect.Type.DB2.toString().equalsIgnoreCase(dialect)){
+				pageSql=new DB2Dialect().getLimitString(sql,page.getCurrentResult(),page.getCurrentResult()+page.getShowCount());
 			}
 			return pageSql;
 		}else{
