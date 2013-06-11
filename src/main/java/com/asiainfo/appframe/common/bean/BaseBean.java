@@ -4,9 +4,8 @@ import java.io.Serializable;
 
 /**
  * 实体类的基类
- * 
  * @author luhf
- * @date Jan 8, 2013 12:25:36 PM
+ * @date 2013-6-11 下午6:11:46
  */
 public class BaseBean implements Serializable{
 
